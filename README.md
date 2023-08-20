@@ -87,6 +87,7 @@ To submit your solution please open a pull request to the main branch and add an
 A few issues came up while reviewing the code:
 * Critical
   * Missing default end point (`/`) is bad practice, so I added one.
+  * Database connection should not be with the server. I moved the creation part to a new file.
   * `/api/illustrations` ln. 72-74 - illustrations sent in the response are not updated as the fetching is done before the update, this is a bug.
   * In `login.html` there were 2 email fields with the same id, so I changed the second one to `emailForgot`.
   * let illustrations = [] it's bad practice to position it as a global variable, I moved it to the function using it.
@@ -114,4 +115,12 @@ Added missing usage of `cors` which should prevent the issue.
   * If needed we should add the new paginator fields to the client (ui) as well.
 
 ### 4 Project deployment
-* I use `digitalocean.com` VPS for deploying the project directly from my github 
+* I would use `digitalocean.com` VPS (which is very robust, chip, and can be customized easley) for deploying the project directly from my Github where the repo of the project is located using the following steps:
+  * Create Account for the company.
+  * Create a managed database to be used by the project in this case MYSQL V8 should be fine.
+  * Change the function `openDb` in `database.js` according to the database configuration.
+  * Connect digitalocean to the company's Github service.
+  * Set up the application by choosing the application's repository.
+  * Click deploy and wait for build and deploy to complete.
+  * Test the application in Production mode.
+* Please note that for now the application is not deployed and the bullets above should be referred to as a suggestion. 

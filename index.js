@@ -30,10 +30,8 @@ app.post('/loginUser', async (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
 
-    const query = `SELECT * FROM users WHERE email = '${email}' AND password = '${password}'`;
-
-    console.log('query', query); // remove unneeded log
-    const user = await db.get(query);
+    const getUserQuery = `SELECT * FROM users WHERE email = '${email}' AND password = '${password}'`;
+    const user = await db.get(getUserQuery);
     if (user === undefined) {
       res.redirect('login.html');
     } else {
@@ -52,14 +50,13 @@ app.put('/forgot', async (req, res) => {
 
     const email = req.query.email;
 
-    const query = `SELECT * FROM users WHERE email = '${email}'`;
-    console.log('query', query);
-    const user = await db.get(query);
+    const getUserQuery = `SELECT * FROM users WHERE email = '${email}'`;
+    const user = await db.get(getUserQuery);
     if (user) {
       sendRecoveryEmail(user.email, user.password);
       res.redirect('forgot.html');
     } else {
-      res.status(404).send();
+      res.redirect('login.html');
     }
   } catch (err) {
     console.error(err);
@@ -80,8 +77,8 @@ app.get('/api/illustrations/:page?/:limit?', async (req,res) => {
   const offset = page * limit;
 
   await db.exec('UPDATE illustrations SET impressions = impressions + 1');
-  const query = `SELECT * FROM ILLUSTRATIONS LIMIT ${limit} OFFSET ${offset}`;
-  const illustrations = await db.all(query);
+  const aggregateImpressionsQuery = `SELECT * FROM ILLUSTRATIONS LIMIT ${limit} OFFSET ${offset}`;
+  const illustrations = await db.all(aggregateImpressionsQuery);
   res.send(illustrations);
 });
 
@@ -90,7 +87,8 @@ app.put('/api/illustrations/:id', async (req,res) => {
   if(req.params.id === undefined || req.params.id === null) {
     res.status(404).send('Invalid illustration id');
   }
-  await db.exec(`UPDATE illustrations SET uses = uses + 1 WHERE id = '${req.params.id}'`);
+  const aggregateUsesQuery = `UPDATE illustrations SET uses = uses + 1 WHERE id = '${req.params.id}'`
+  await db.exec(aggregateUsesQuery);
   res.send();
 });
 
