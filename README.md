@@ -77,3 +77,41 @@ To submit your solution please open a pull request to the main branch and add an
 
 
 # Good luck and have fun!
+
+---
+
+# Tamir's Solution:
+
+### 1 - Code review
+
+A few issues came up while reviewing the code:
+* Critical
+  * Missing default end point (`/`) is bad practice, so I added one.
+  * `/api/illustrations` ln. 72-74 - illustrations sent in the response are not updated as the fetching is done before the update, this is a bug.
+  * In `login.html` there were 2 email fields with the same id, so I changed the second one to `emailForgot`.
+  * let illustrations = [] it's bad practice to position it as a global variable, I moved it to the function using it.
+  * The following code used twice in the original code :`res.status(404).send();`. 
+    * This code actually breaks the flow of the system because the user cannot do anything after getting this error.
+    * We should add a hidden field to `login.html` which should display the errors instead of using the 404 error.
+* Not critical (worked well without my changes) but for good practice I've also changed the following:
+  * It's a bit unusual to use both `""` and `'`, the common one in JS is `'` so I changed the code accordingly.
+  * Usage of correct restapi CRUD endpoints was a bit messy, i.e. login ep was `GET` and should be `POST` etc. 
+    * This was also reflected in the html part.
+  * There were a few `console.log` calls which were removed, in the future a proper logging mechanism should be implemented.
+  * I found a few times were keyword `let` was used instead of `const`.
+  * Adding param values to the param in queries, so I think 
+    * `const query = SELECT * FROM users WHERE email = '${email}'`
+    * is better then 
+    * `const query = 'SELECT * FROM users WHERE email = "' + email + '"';`
+
+### 2 - Fix Cross-Origin Request Blocked issue.
+Added missing usage of `cors` which should prevent the issue.
+
+### 3 - Production readiness
+* System worked well in local env. which has a few entries in each DB table, however, when trying to fetch from large tables the service would have taken a lot of time to complete datafetching.
+  * As a solution a basic DB paginator mechanism was implemented for the big `illustrations` fetch by modifying the end point `/api/illustrations/:page?/:limit?` and adding the page number and limit the results during the sql query.
+  * This should allow faster fetching.
+  * If needed we should add the new paginator fields to the client (ui) as well.
+
+### 4 Project deployment
+* I use `digitalocean.com` VPS for deploying the project directly from my github 

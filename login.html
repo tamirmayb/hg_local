@@ -7,7 +7,7 @@
     <title>Login page</title>
   </head>
   <body>
-    <form action="/login" method="GET">
+    <form action="/loginUser" method="post">
         <h1>Login:</h1>
       <label for="email">Email:</label>
       <br>
@@ -21,11 +21,11 @@
     </form>
   </body>
   <br>
-  <form action="/forgot" method="GET">
+  <form action="/forgot" method="put">
     <h4>Forgot password:</h4>
-  <label for="email">Email:</label>
+  <label for="emailForgot">Email:</label>
   <br>
-  <input type="email" name="email" id="email" />
+  <input type="email" name="email" id="emailForgot" />
   <br>
   <input type="submit" value="Remind me" />
 </form>
