@@ -87,7 +87,7 @@ To submit your solution please open a pull request to the main branch and add an
 A few issues came up while reviewing the code:
 * Critical
   * Missing default end point (`/`) is bad practice, so I added one.
-  * Database connection should not be with the server. I moved the creation part to a new file.
+  * Database connection should not be with the server's general code. I moved the creation part to a new file.
   * `/api/illustrations` ln. 72-74 - illustrations sent in the response are not updated as the fetching is done before the update, this is a bug.
   * In `login.html` there were 2 email fields with the same id, so I changed the second one to `emailForgot`.
   * let illustrations = [] it's bad practice to position it as a global variable, I moved it to the function using it.

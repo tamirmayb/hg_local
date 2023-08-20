@@ -1,26 +1,17 @@
 const express = require('express');
 const app = express();
 
-const sqlite3 = require('sqlite3');
-const { open } = require('sqlite');
+const cors = require('cors');
+const { openDb } = require("./database");
+const bodyParser = require('body-parser');
 
 const { sendRecoveryEmail } = require('./email');
-
-const cors = require('cors');
-const bodyParser = require('body-parser');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors({
   origin: '*'
 }));
-
-async function openDb() {
-  return open({
-    filename: './database.db',
-    driver: sqlite3.Database,
-  });
-}
 
 app.post('/loginUser', async (req, res) => {
 
@@ -84,12 +75,22 @@ app.get('/api/illustrations/:page?/:limit?', async (req,res) => {
 
 app.put('/api/illustrations/:id', async (req,res) => {
   const db = await openDb();
+
   if(req.params.id === undefined || req.params.id === null) {
     res.status(404).send('Invalid illustration id');
   }
-  const aggregateUsesQuery = `UPDATE illustrations SET uses = uses + 1 WHERE id = '${req.params.id}'`
-  await db.exec(aggregateUsesQuery);
-  res.send();
+
+  const illustrationId = req.params.id;
+  const aggregateImpressionsQuery = `SELECT * FROM ILLUSTRATIONS WHERE id = '${illustrationId}'`;
+  const illustration = await db.get(aggregateImpressionsQuery);
+  if (illustration) {
+    const aggregateUsesQuery = `UPDATE illustrations SET uses = uses + 1 WHERE id = '${illustrationId}'`;
+    await db.exec(aggregateUsesQuery);
+
+    res.send(`Updated illustration id ${illustrationId}`);
+  } else {
+    res.status(404).send(`Invalid illustration id ${illustrationId}`);
+  }
 });
 
 app.use(express.static('.'));
